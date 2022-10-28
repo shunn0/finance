@@ -12,3 +12,9 @@ Technology stack:
 • Maven
 • Spring Boot
 • JUnit
+----------------------------------------------------------------------
+TO Deploy:
+
+mvn clean install
+
+mvn spring-boot:run
