@@ -1,38 +1,48 @@
 package com.gsg.finance.service;
 
+import com.gsg.finance.controller.exception.TaxRateNotFound;
+import com.gsg.finance.dto.FinanceDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 class FinanceServiceTest {
-
-    @MockBean
-    TaxRateProviderService taxRateProviderService;
 
     @Autowired
     FinanceService financeService;
 
     @Test
-    public void testCalculateNetPriceNormalMockedRate(){
-        Mockito.when(taxRateProviderService.taxRateProvider("UK")).thenReturn(0.10);
-        double netPrice = financeService.calculateNetPrice(200, "UK");
-        Assertions.assertEquals(180, netPrice);
+    public void testCalculateNetPriceNormalMockedRate() throws TaxRateNotFound {
+        FinanceDTO netPrice = financeService.calculateNetPrice(200, "DE");
+        Assertions.assertEquals(162.0, netPrice.getNetPrice());
+    }
+    @Test
+    public void testCalculateNetPriceNormalMockedRate2() throws TaxRateNotFound {
+
+        Exception exception = Assertions.assertThrows(TaxRateNotFound.class,
+                () -> {
+                    financeService.calculateNetPrice(200, "IN");
+                }
+                );
+        String expectedMessage = "Tax Rate for provided country missing";
+        String actualMessage = exception.getMessage();
+
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
-    public void testCalculateNetPriceMaxIntPrice(){
-        double netPrice = financeService.calculateNetPrice(Integer.MAX_VALUE, "UK");
-        Assertions.assertEquals(2.147483647E9, netPrice);
+    public void testCalculateNetPriceMaxIntPrice() throws TaxRateNotFound {
+        FinanceDTO netPrice = financeService.calculateNetPrice(Integer.MAX_VALUE, "UK");
+        Assertions.assertEquals(1.9327352823E9, netPrice.getNetPrice());
     }
 
     @Test
-    public void testCalculateNetPriceMaxDoublePrice(){
-        double netPrice = financeService.calculateNetPrice(Double.MAX_VALUE, "UK");
-        Assertions.assertEquals(1.7976931348623157E308, netPrice);
+    public void testCalculateNetPriceMaxDoublePrice() throws TaxRateNotFound {
+        FinanceDTO netPrice = financeService.calculateNetPrice(Double.MAX_VALUE, "UK");
+        Assertions.assertEquals(1.6179238213760842E308, netPrice.getNetPrice());
     }
 
 }

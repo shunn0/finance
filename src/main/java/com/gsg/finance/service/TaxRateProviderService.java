@@ -8,14 +8,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class TaxRateProviderService {
 
-    private static Map<String, Double> countryTaxRateMap = new ConcurrentHashMap<>();
+    private Map<String, Double> countryTaxRateMap = new ConcurrentHashMap<>();
 
-    public double taxRateProvider(String countryIso){
-        return countryTaxRateMap.get(countryIso);
+    public double taxRateProvider(String countryIso) {
+        if (countryTaxRateMap.containsKey(countryIso)) {
+            return countryTaxRateMap.get(countryIso);
+        } else {
+            return -1.0;
+        }
     }
 
 
-    public static void loadTaxRateMap(){
+    public void loadTaxRateMap() {
         countryTaxRateMap.put("DE", 0.19);
         countryTaxRateMap.put("FR", 0.20);
         countryTaxRateMap.put("UK", 0.10);

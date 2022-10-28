@@ -1,6 +1,7 @@
 package com.gsg.finance;
 
 import com.gsg.finance.service.TaxRateProviderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -14,8 +15,10 @@ public class FinanceApplication {
 
     }
 
+    @Autowired
+    TaxRateProviderService taxRateProviderService;
     @PostConstruct
     public void init() {
-        TaxRateProviderService.loadTaxRateMap();
+        taxRateProviderService.loadTaxRateMap();
     }
 }
